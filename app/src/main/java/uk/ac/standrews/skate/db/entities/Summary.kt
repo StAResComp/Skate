@@ -1,9 +1,6 @@
 package uk.ac.standrews.skate.db.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
 import uk.ac.standrews.skate.db.entities.Species
 import java.util.*
 
@@ -13,9 +10,12 @@ import java.util.*
         ForeignKey(
             entity = Species::class,
             parentColumns = ["id"],
-            childColumns = ["speciesId"],
+            childColumns = ["species_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("species_id")
     ]
 )
 data class Summary (

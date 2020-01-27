@@ -1,10 +1,7 @@
 package uk.ac.standrews.skate.db
 
 import android.content.Context
-import androidx.room.Database
-import androidx.room.Room
-import androidx.room.RoomDatabase
-import androidx.room.TypeConverter
+import androidx.room.*
 import androidx.sqlite.db.SupportSQLiteDatabase
 import uk.ac.standrews.skate.db.entities.*
 import java.util.*
@@ -20,6 +17,7 @@ import java.util.concurrent.Executors
     ],
     version = 1
 )
+@TypeConverters(DateTypeConverter::class)
 abstract class SkateDatabase : RoomDatabase() {
 
     abstract fun skateDao() : SkateDao

@@ -1,9 +1,7 @@
 package uk.ac.standrews.skate.db.entities
 
-import androidx.room.ColumnInfo
-import androidx.room.Entity
-import androidx.room.ForeignKey
-import androidx.room.PrimaryKey
+import androidx.room.*
+import androidx.room.util.TableInfo
 import uk.ac.standrews.skate.db.entities.Individual
 import java.util.*
 
@@ -13,9 +11,12 @@ import java.util.*
         ForeignKey(
             entity = Individual::class,
             parentColumns = ["id"],
-            childColumns = ["individualId"],
+            childColumns = ["individual_id"],
             onDelete = ForeignKey.CASCADE
         )
+    ],
+    indices = [
+        Index("individual_id")
     ]
 )
 data class Photo (
