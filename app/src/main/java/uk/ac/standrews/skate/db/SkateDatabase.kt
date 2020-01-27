@@ -1,10 +1,14 @@
 package uk.ac.standrews.skate.db
 
+import android.content.Context
 import androidx.room.Database
+import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverter
+import androidx.sqlite.db.SupportSQLiteDatabase
 import uk.ac.standrews.skate.db.entities.*
 import java.util.*
+import java.util.concurrent.Executors
 
 @Database(
     entities = [
@@ -17,7 +21,56 @@ import java.util.*
     version = 1
 )
 abstract class SkateDatabase : RoomDatabase() {
-    abstract fun skateDao(): SkateDao
+
+    abstract fun skateDao() : SkateDao
+
+    companion object {
+        @Volatile
+        private var INSTANCE: SkateDatabase? = null
+
+        fun getSkateDatabase(context: Context) : SkateDatabase {
+            return INSTANCE ?: synchronized(this) {
+                val instance = Room.databaseBuilder(
+                    context.applicationContext,
+                    SkateDatabase::class.java,
+                    "skate.sqlite"
+                )
+                    .addCallback(seedDatabaseCallback(context))
+                    .build()
+                INSTANCE = instance
+                return instance
+            }
+        }
+
+        fun seedDatabaseCallback(context: Context) : Callback {
+            return object : Callback() {
+                override fun onCreate(db: SupportSQLiteDatabase) {
+                    super.onCreate(db)
+                    Executors.newSingleThreadExecutor().execute {
+                        val dao = getSkateDatabase(context).skateDao()
+                        val currentSpecies = dao.getSpecies()
+                        if (currentSpecies.isEmpty()) {
+                            val speciesNames = arrayOf(
+                                Species(1, "Flapper skate"),
+                                Species(2, "Thornback ray"),
+                                Species(3, "Spurdog"),
+                                Species(4, "Lesser spotted dogfish"),
+                                Species(5, "Blackmouth catshark"),
+                                Species(6, "Cuckoo Ray"),
+                                Species(7, "Bull Huss"),
+                                Species(8, "Tope"),
+                                Species(9, "Other skate"),
+                                Species(10, "Other shark")
+                            )
+                            dao.insertSpecies(speciesNames)
+                        }
+                    }
+                }
+            }
+        }
+
+    }
+
 }
 
 /**
