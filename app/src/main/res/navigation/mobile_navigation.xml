@@ -13,13 +13,13 @@
 
     <fragment
         android:id="@+id/navigation_summary"
-        android:name="uk.ac.standrews.skate.ui.dashboard.DashboardFragment"
+        android:name="uk.ac.standrews.skate.ui.summary.SummaryFragment"
         android:label="@string/title_summary"
         tools:layout="@layout/fragment_summary" />
 
     <fragment
         android:id="@+id/navigation_flapper_skate"
-        android:name="uk.ac.standrews.skate.ui.notifications.NotificationsFragment"
+        android:name="uk.ac.standrews.skate.ui.flapperSkate.FlapperSkateFragment"
         android:label="@string/title_flapper_skate"
         tools:layout="@layout/fragment_flapper_skate" />
 </navigation>
