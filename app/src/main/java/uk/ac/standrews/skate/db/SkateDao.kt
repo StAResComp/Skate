@@ -31,4 +31,7 @@ interface SkateDao {
     @Query("SELECT * FROM effort WHERE id = :id")
     fun getEffortById(id: Int) : Effort?
 
+    @Query("SELECT * FROM summaries ORDER BY date DESC, species_id ASC")
+    fun getSummaries(): LiveData<Array<Summary>>
+
 }
