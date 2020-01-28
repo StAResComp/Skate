@@ -1,23 +1,24 @@
 package uk.ac.standrews.skate.ui.home
 
+import android.Manifest
+import android.app.Activity
 import android.content.Context
+import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import uk.ac.standrews.skate.R
 import uk.ac.standrews.skate.db.entities.Effort
-import java.text.DateFormat
-import java.time.format.DateTimeFormatter
-import java.util.*
 
 class HomeFragment : Fragment(), LocationListener {
 
@@ -52,7 +53,6 @@ class HomeFragment : Fragment(), LocationListener {
         homeViewModel.getLastEffort().observe(this, Observer {
             if (it != null) {
                 if (it.finishedAt == null) {
-                    Log.e("OBSERVING_CURRENT", "Not null")
                     currentEffort = it
                     currentEffortText.text = it.toString()
                     finishMode()
@@ -75,7 +75,6 @@ class HomeFragment : Fragment(), LocationListener {
         finishButton.setOnClickListener {
             val currentLocation = location
             val effortToFinish = currentEffort
-            Log.e("FINISHING", effortToFinish.toString())
             if (currentLocation != null && effortToFinish != null) {
                 homeViewModel.finishEffort(
                     effortToFinish.id,
@@ -108,15 +107,36 @@ class HomeFragment : Fragment(), LocationListener {
         finishButton.visibility = View.VISIBLE
     }
 
+    private val REQUESTCODE = 568
+
     private fun getLocation() {
-        try {
-            locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE)
-                    as LocationManager
-            locationManager.requestLocationUpdates(
-                LocationManager.GPS_PROVIDER, 5000, 5f, this)
+        if (ContextCompat.checkSelfPermission(activity!!.applicationContext,
+                Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                locationManager = activity!!.getSystemService(Context.LOCATION_SERVICE)
+                        as LocationManager
+                locationManager.requestLocationUpdates(
+                    LocationManager.GPS_PROVIDER, 5000, 5f, this
+                )
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
         }
-        catch(e: SecurityException) {
-            e.printStackTrace()
+        else {
+            ActivityCompat.requestPermissions(activity as Activity,
+                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION), REQUESTCODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUESTCODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                getLocation()
+            }
         }
     }
 
@@ -125,14 +145,11 @@ class HomeFragment : Fragment(), LocationListener {
     }
 
     override fun onProviderDisabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onProviderEnabled(provider: String?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     override fun onStatusChanged(provider: String?, status: Int, extras: Bundle?) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
