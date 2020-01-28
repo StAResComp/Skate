@@ -3,6 +3,7 @@ package uk.ac.standrews.skate.db.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import java.text.DateFormat
 import java.util.*
 
 @Entity
@@ -17,4 +18,21 @@ data class Effort (
     @ColumnInfo(name = "num_rods") val numRods: Int,
     @ColumnInfo(name = "created_at") val createdAt: Date,
     @ColumnInfo(name = "modified_at") var modifiedAt: Date
-)
+) {
+    override fun toString(): String {
+        val loc = Locale("en", "GB")
+        val dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, loc)
+        val startTime = dateFormat.format(startedAt)
+        val startLat = "%.2f".format(startingLatitude)
+        val startLon = "%.2f".format(startingLongitude)
+        if (finishedAt != null) {
+            val finishTime = dateFormat.format(finishedAt)
+            val finishLat = "%.2f".format(finishingLatitude)
+            val finishLon = "%.2f".format(finishingLongitude)
+            return "$startTime/$startLat,$startLon - $finishTime/$finishLat,$finishLon ($numRods rods)"
+        }
+        else {
+            return "Started at $startTime/$startLat,$startLon ($numRods rods)"
+        }
+    }
+}

@@ -40,27 +40,21 @@ class HomeFragment : Fragment(), LocationListener {
             ViewModelProviders.of(this)
                 .get(HomeViewModel(this.activity!!.application)::class.java)
         val root = inflater.inflate(R.layout.fragment_home, container, false)
-        val list: ExpandableListView = root.findViewById(R.id.effort_list)
-//        homeViewModel.getPreviousEffort().observe(this, Observer {
-//            list.adapter = SimpleExpandableListAdapter(this.context, android.R.layout.simple_list_item_1, it)
-//        })
+        val list: ListView = root.findViewById(R.id.effort_list)
+        homeViewModel.getPreviousEffort().observe(this, Observer {
+            list.adapter = ArrayAdapter(this.context, android.R.layout.simple_list_item_1, android.R.id.text1, it)
+        })
         startButton = root.findViewById(R.id.start_button)
         finishButton = root.findViewById(R.id.finish_button)
         numRodsField = root.findViewById(R.id.num_rods)
         numRodsLabel = root.findViewById(R.id.num_rods_label) as TextView
         currentEffortText = root.findViewById(R.id.current_effort_text) as TextView
-        val loc = Locale("en", "GB")
-        val dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, loc)
         homeViewModel.getLastEffort().observe(this, Observer {
             if (it != null) {
                 if (it.finishedAt == null) {
                     Log.e("OBSERVING_CURRENT", "Not null")
                     currentEffort = it
-                    val startTime = dateFormat.format(it.startedAt)
-                    val startLat = "%.2f".format(it.startingLatitude)
-                    val startLon = "%.2f".format(it.startingLongitude)
-                    currentEffortText.text =
-                        "Fishing since ${startTime} at ${startLat},${startLon} with ${it.numRods} rods."
+                    currentEffortText.text = it.toString()
                     finishMode()
                 }
                 else {
@@ -68,7 +62,6 @@ class HomeFragment : Fragment(), LocationListener {
                 }
             }
         })
-        getLocation()
         startButton.setOnClickListener {
             val currentLocation = location
             if (currentLocation != null) {
@@ -82,6 +75,7 @@ class HomeFragment : Fragment(), LocationListener {
         finishButton.setOnClickListener {
             val currentLocation = location
             val effortToFinish = currentEffort
+            Log.e("FINISHING", effortToFinish.toString())
             if (currentLocation != null && effortToFinish != null) {
                 homeViewModel.finishEffort(
                     effortToFinish.id,
@@ -91,6 +85,11 @@ class HomeFragment : Fragment(), LocationListener {
             }
         }
         return root
+    }
+
+    override fun onResume() {
+        super.onResume()
+        getLocation()
     }
 
     private fun startMode() {
