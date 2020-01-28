@@ -18,7 +18,7 @@ import java.util.*
     ]
 )
 class Individual (
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "species_id") val speciesId: Int,
     val length: Double,
     val width: Double,

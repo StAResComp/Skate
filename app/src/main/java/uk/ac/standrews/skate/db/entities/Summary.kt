@@ -19,7 +19,7 @@ import java.util.*
     ]
 )
 data class Summary (
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "species_id") val speciesId: Int,
     @ColumnInfo(name = "other_name") val otherName: String,
     val number: Int,

@@ -49,16 +49,16 @@ abstract class SkateDatabase : RoomDatabase() {
                         val currentSpecies = dao.getSpecies()
                         if (currentSpecies.isEmpty()) {
                             val speciesNames = arrayOf(
-                                Species(1, "Flapper skate"),
-                                Species(2, "Thornback ray"),
-                                Species(3, "Spurdog"),
-                                Species(4, "Lesser spotted dogfish"),
-                                Species(5, "Blackmouth catshark"),
-                                Species(6, "Cuckoo Ray"),
-                                Species(7, "Bull Huss"),
-                                Species(8, "Tope"),
-                                Species(9, "Other skate"),
-                                Species(10, "Other shark")
+                                Species(0, "Flapper skate"),
+                                Species(0, "Thornback ray"),
+                                Species(0, "Spurdog"),
+                                Species(0, "Lesser spotted dogfish"),
+                                Species(0, "Blackmouth catshark"),
+                                Species(0, "Cuckoo Ray"),
+                                Species(0, "Bull Huss"),
+                                Species(0, "Tope"),
+                                Species(0, "Other skate"),
+                                Species(0, "Other shark")
                             )
                             dao.insertSpecies(speciesNames)
                         }

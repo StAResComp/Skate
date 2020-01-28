@@ -20,7 +20,7 @@ import java.util.*
     ]
 )
 data class Photo (
-    @PrimaryKey val id: Int,
+    @PrimaryKey(autoGenerate = true) val id: Int,
     @ColumnInfo(name = "individual_id") val individualId: Int,
     val file: String,
     @ColumnInfo(name = "created_at") val createdAt: Date,
