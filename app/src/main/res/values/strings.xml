@@ -3,4 +3,7 @@
     <string name="title_home">Effort</string>
     <string name="title_summary">Summary</string>
     <string name="title_flapper_skate">Flapper Skate</string>
+
+    <string name="summary_field_type_tag">Field Type</string>
+    <string name="summary_species_tag">Species</string>
 </resources>

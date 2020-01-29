@@ -16,6 +16,9 @@ interface SkateDao {
     @Insert
     fun insertEffort(effort: Effort)
 
+    @Insert
+    fun insertSummaries(summaries: List<Summary>)
+
     @Update
     fun updateEffort(effort: Effort)
 

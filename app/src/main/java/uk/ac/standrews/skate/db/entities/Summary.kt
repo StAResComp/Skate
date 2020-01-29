@@ -20,9 +20,9 @@ import java.util.*
 )
 data class Summary (
     @PrimaryKey(autoGenerate = true) val id: Int,
-    @ColumnInfo(name = "species_id") val speciesId: Int,
-    @ColumnInfo(name = "other_name") val otherName: String,
-    val number: Int,
+    @ColumnInfo(name = "species_id") var speciesId: Int?,
+    @ColumnInfo(name = "other_name") var otherName: String?,
+    var number: Int?,
     val date: Date,
     @ColumnInfo(name = "created_at") val createdAt: Date,
     @ColumnInfo(name = "modified_at") val modifiedAt: Date
