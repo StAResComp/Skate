@@ -19,6 +19,9 @@ interface SkateDao {
     @Insert
     fun insertSummaries(summaries: List<Summary>)
 
+    @Insert
+    fun insertIndividual(individual: Individual)
+
     @Update
     fun updateEffort(effort: Effort)
 
@@ -36,4 +39,10 @@ interface SkateDao {
 
     @Query("SELECT * FROM summaries ORDER BY date DESC, species_id ASC")
     fun getSummaries(): LiveData<Array<Summary>>
+
+    @Query("SELECT id FROM species WHERE name LIKE 'Flapper skate'")
+    fun getFlapperSkateId(): Int
+
+    @Query("SELECT * FROM individuals ORDER BY date DESC")
+    fun getIndividuals(): LiveData<Array<Individual>>
 }
