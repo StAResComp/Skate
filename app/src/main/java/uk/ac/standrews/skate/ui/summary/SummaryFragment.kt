@@ -1,15 +1,11 @@
 package uk.ac.standrews.skate.ui.summary
 
 import android.os.Bundle
-import android.util.Log
 import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.GridLayout
-import android.widget.TextView
+import android.widget.*
 import androidx.core.util.containsKey
 import androidx.core.util.set
 import androidx.core.view.children
@@ -18,7 +14,7 @@ import androidx.lifecycle.ViewModelProviders
 import uk.ac.standrews.skate.R
 import uk.ac.standrews.skate.db.entities.Summary
 import java.util.*
-import kotlin.collections.HashMap
+import androidx.lifecycle.Observer
 
 class SummaryFragment : Fragment() {
 
@@ -28,6 +24,7 @@ class SummaryFragment : Fragment() {
     private val NUMTYPE = 654
     private val NAMETYPE = 655
     private lateinit var saveButton: Button
+    private lateinit var formToggleButton: Button
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -38,6 +35,10 @@ class SummaryFragment : Fragment() {
             ViewModelProviders.of(this).get(SummaryViewModel::class.java)
         val root = inflater.inflate(R.layout.fragment_summary, container, false)
         val formGrid: GridLayout = root.findViewById(R.id.form_grid)
+        val list: ListView = root.findViewById(R.id.summary_list)
+        summaryViewModel.getSummaries().observe(this, Observer {
+            list.adapter = ArrayAdapter(this.context, android.R.layout.simple_list_item_1, android.R.id.text1, it)
+        })
         val speciesArray = summaryViewModel.getSpecies()
         var index = 0
         speciesArray.forEach {
@@ -96,11 +97,22 @@ class SummaryFragment : Fragment() {
                             summaryMap[speciesId] = summary
                         }
                     }
+                    it.text.clear()
                 }
             }
             summaryViewModel.saveSummaries(summaryMap)
         }
-
+        formToggleButton = root.findViewById(R.id.form_toggle_button)
+        formToggleButton.setOnClickListener {
+            if (formGrid.visibility == View.VISIBLE) {
+                formGrid.visibility = View.GONE
+                formToggleButton.text = "Show form"
+            }
+            else {
+                formGrid.visibility = View.VISIBLE
+                formToggleButton.text = "Hide form"
+            }
+        }
         return root
     }
 }

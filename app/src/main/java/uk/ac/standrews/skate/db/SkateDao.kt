@@ -36,5 +36,4 @@ interface SkateDao {
 
     @Query("SELECT * FROM summaries ORDER BY date DESC, species_id ASC")
     fun getSummaries(): LiveData<Array<Summary>>
-
 }
