@@ -7,6 +7,8 @@ import androidx.room.Query
 import androidx.room.Update
 import uk.ac.standrews.skate.db.entities.*
 import uk.ac.standrews.skate.db.joins.DailySummary
+import uk.ac.standrews.skate.db.joins.IndividualForExport
+import uk.ac.standrews.skate.db.joins.SummaryForExport
 
 @Dao
 interface SkateDao {
@@ -35,6 +37,9 @@ interface SkateDao {
     @Query("SELECT * FROM effort ORDER BY started_at DESC LIMIT 1")
     fun getLastEffort() : LiveData<Effort>
 
+    @Query("SELECT * FROM effort ORDER BY finished_at ASC")
+    fun getEffort(): List<Effort>
+
     @Query("SELECT * FROM effort WHERE id = :id")
     fun getEffortById(id: Int) : Effort?
 
@@ -49,4 +54,10 @@ interface SkateDao {
 
     @Query("SELECT summaries.date AS date, GROUP_CONCAT(summaries.number || ' ' || species.name || COALESCE(' (' || summaries.other_name || ')', ''), ', ') AS summaryString FROM summaries JOIN species ON summaries.species_id = species.id GROUP BY summaries.date ORDER BY summaries.date DESC")
     fun getDailySummaries(): LiveData<Array<DailySummary>>
+
+    @Query("SELECT summaries.date AS date, species.name AS speciesName, summaries.other_name AS otherName, summaries.number AS number FROM summaries JOIN species ON summaries.species_id = species.id ORDER BY summaries.date ASC")
+    fun getSummariesForExport(): List<SummaryForExport>
+
+    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, individuals.pit_tag_number AS pitTagNumber FROM individuals JOIN species ON individuals.species_id = species.id ORDER BY individuals.date ASC")
+    fun getIndividualsForExport(): List<IndividualForExport>
 }

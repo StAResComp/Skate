@@ -35,4 +35,12 @@ data class Effort (
             return "Started at $startTime/$startLat,$startLon ($numRods rods)"
         }
     }
+
+    fun getCsvHeaderRow(): String {
+        return "Start time, Start lat, Start lon, Finish time, Finish lat, Finish lon, Num rods"
+    }
+
+    fun toCsvString(): String {
+        return "${startedAt.toString()},$startingLatitude,$startingLongitude,${finishedAt.toString()},$finishingLatitude,$finishingLongitude,$numRods"
+    }
 }
