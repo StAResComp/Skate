@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import uk.ac.standrews.skate.db.entities.*
+import uk.ac.standrews.skate.db.joins.DailySummary
 
 @Dao
 interface SkateDao {
@@ -45,4 +46,7 @@ interface SkateDao {
 
     @Query("SELECT * FROM individuals ORDER BY date DESC")
     fun getIndividuals(): LiveData<Array<Individual>>
+
+    @Query("SELECT summaries.date AS date, GROUP_CONCAT(summaries.number || ' ' || species.name || COALESCE(' (' || summaries.other_name || ')', ''), ', ') AS summaryString FROM summaries JOIN species ON summaries.species_id = species.id GROUP BY summaries.date ORDER BY summaries.date DESC")
+    fun getDailySummaries(): LiveData<Array<DailySummary>>
 }
