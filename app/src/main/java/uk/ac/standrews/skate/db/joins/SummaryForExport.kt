@@ -1,5 +1,6 @@
 package uk.ac.standrews.skate.db.joins
 
+import uk.ac.standrews.skate.db.Exportable
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -8,7 +9,7 @@ data class SummaryForExport(
     private val speciesName: String,
     private val otherName: String?,
     private val number: Int
-) {
+) : Exportable {
     override fun toString(): String {
         val dateString = SimpleDateFormat("yyyy-MM-dd").format(date)
         var otherNameString = ""
@@ -16,7 +17,11 @@ data class SummaryForExport(
         return "$dateString, $speciesName, \"$otherNameString\", $number"
     }
 
-    fun getCsvHeaderRow(): String {
+    override fun toCsvString(): String {
+        return toString()
+    }
+
+    override fun getCsvHeaderRow(): String {
         return "Date, Species, Other name, Number"
     }
 }

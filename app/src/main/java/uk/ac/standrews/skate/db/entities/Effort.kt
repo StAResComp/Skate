@@ -3,6 +3,7 @@ package uk.ac.standrews.skate.db.entities
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import uk.ac.standrews.skate.db.Exportable
 import java.text.DateFormat
 import java.util.*
 
@@ -18,7 +19,7 @@ data class Effort (
     @ColumnInfo(name = "num_rods") val numRods: Int,
     @ColumnInfo(name = "created_at") val createdAt: Date,
     @ColumnInfo(name = "modified_at") var modifiedAt: Date
-) {
+) : Exportable {
     override fun toString(): String {
         val loc = Locale("en", "GB")
         val dateFormat = DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, loc)
@@ -36,11 +37,11 @@ data class Effort (
         }
     }
 
-    fun getCsvHeaderRow(): String {
+    override fun getCsvHeaderRow(): String {
         return "Start time, Start lat, Start lon, Finish time, Finish lat, Finish lon, Num rods"
     }
 
-    fun toCsvString(): String {
+    override fun toCsvString(): String {
         return "${startedAt.toString()},$startingLatitude,$startingLongitude,${finishedAt.toString()},$finishingLatitude,$finishingLongitude,$numRods"
     }
 }
