@@ -1,6 +1,7 @@
 package uk.ac.standrews.skate.ui.home
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import uk.ac.standrews.skate.db.SkateDatabase

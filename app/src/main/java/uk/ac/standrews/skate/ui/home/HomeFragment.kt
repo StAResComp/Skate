@@ -8,6 +8,7 @@ import android.location.Location
 import android.location.LocationListener
 import android.location.LocationManager
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -65,11 +66,15 @@ class HomeFragment : Fragment(), LocationListener {
         startButton.setOnClickListener {
             val currentLocation = location
             if (currentLocation != null) {
+                Log.e("Effort", "Location: ${currentLocation.latitude},${currentLocation.longitude}")
                 homeViewModel.startEffort(
                     Integer.parseInt(numRodsField.text.toString()),
                     currentLocation.latitude, currentLocation.longitude
                 )
                 finishMode()
+            }
+            else {
+                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT)
             }
         }
         finishButton.setOnClickListener {
@@ -81,6 +86,9 @@ class HomeFragment : Fragment(), LocationListener {
                     currentLocation.latitude, currentLocation.longitude
                 )
                 startMode()
+            }
+            else {
+                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT)
             }
         }
         return root
@@ -118,6 +126,7 @@ class HomeFragment : Fragment(), LocationListener {
                 locationManager.requestLocationUpdates(
                     LocationManager.GPS_PROVIDER, 5000, 5f, this
                 )
+                this.location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER)
             } catch (e: SecurityException) {
                 e.printStackTrace()
             }
