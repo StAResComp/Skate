@@ -4,29 +4,37 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <GridLayout
-        android:id="@+id/form_grid"
+    <ScrollView
+        android:id="@+id/form_grid_scroller"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:columnCount="3"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="120dp"
         app:layout_constraintTop_toTopOf="parent">
 
-        <Button
-            android:id="@+id/save_button"
-            android:layout_width="wrap_content"
+        <GridLayout
+            android:id="@+id/form_grid"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_columnSpan="3"
-            android:layout_gravity="center_horizontal"
-            android:text="Save"/>
+            android:columnCount="3"
+            app:layout_constraintTop_toTopOf="parent">
 
-    </GridLayout>
+            <Button
+                android:id="@+id/save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_columnSpan="3"
+                android:layout_gravity="center_horizontal"
+                android:text="Save"/>
+
+        </GridLayout>
+    </ScrollView>
 
     <Button
         android:id="@+id/form_toggle_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        app:layout_constraintTop_toBottomOf="@id/form_grid"
+        app:layout_constraintTop_toBottomOf="@id/form_grid_scroller"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:text="Hide Form"/>

@@ -5,6 +5,7 @@ import android.util.SparseArray
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.widget.*
 import androidx.core.util.containsKey
 import androidx.core.util.set
@@ -102,14 +103,19 @@ class SummaryFragment : Fragment() {
             }
             summaryViewModel.saveSummaries(summaryMap)
         }
+        val formGridScroller = root.findViewById(R.id.form_grid_scroller) as ScrollView
         formToggleButton = root.findViewById(R.id.form_toggle_button)
         formToggleButton.setOnClickListener {
-            if (formGrid.visibility == View.VISIBLE) {
-                formGrid.visibility = View.GONE
+            val params = formGridScroller.layoutParams
+            if (formGridScroller.visibility == View.VISIBLE) {
+                params.height = 0
+                formGridScroller.layoutParams = params
+                formGridScroller.visibility = View.GONE
                 formToggleButton.text = "Show form"
             }
             else {
-                formGrid.visibility = View.VISIBLE
+                params.height = MATCH_PARENT
+                formGridScroller.visibility = View.VISIBLE
                 formToggleButton.text = "Hide form"
             }
         }
