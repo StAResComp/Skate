@@ -15,6 +15,7 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import uk.ac.standrews.skate.R
@@ -78,7 +79,7 @@ class FlapperSkateFragment : Fragment() {
         override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
             return activity?.let {
                 val builder = AlertDialog.Builder(it)
-                builder.setMessage("Would you like to take a photo?")
+                builder.setMessage("Would you like to take a(nother) photo?")
                     .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
                         dispatchTakePictureIntent()
                     })
@@ -108,6 +109,7 @@ class FlapperSkateFragment : Fragment() {
                         )
                         takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
                         startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
+                        PhotoDialogFragment(timestamp).show(fragmentManager!!, "photo")
                     }
                 }
             }
