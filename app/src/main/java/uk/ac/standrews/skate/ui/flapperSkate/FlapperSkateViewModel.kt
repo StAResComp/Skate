@@ -3,10 +3,9 @@ package uk.ac.standrews.skate.ui.flapperSkate
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import uk.ac.standrews.skate.db.SkateDatabase
 import uk.ac.standrews.skate.db.entities.Individual
+import uk.ac.standrews.skate.db.entities.Photo
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -17,10 +16,13 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
     private var flapperSkateId = 0
 
     fun getIndividuals(): LiveData<Array<Individual>> {
-        return dao.getIndividuals()
+        val c = Callable {
+            dao.getIndividuals()
+        }
+        return Executors.newSingleThreadExecutor().submit(c).get()
     }
 
-    fun saveIndividual(length: Double, width: Double, sex: Char, tagNum: String): Long {
+    fun saveIndividual(length: Double, width: Double, sex: Char, tagNum: String): Pair<Long, Long> {
         if (flapperSkateId == 0) {
             val c = Callable {
                 dao.getFlapperSkateId()
@@ -29,9 +31,21 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
         }
         val now = Date()
         val individual = Individual(0, flapperSkateId, now, length, width, sex, tagNum, now, now)
-        Executors.newSingleThreadExecutor().execute {
+        val c = Callable {
             dao.insertIndividual(individual)
         }
-        return now.time
+        val individualId = Executors.newSingleThreadExecutor().submit(c).get()
+        return Pair(individualId, now.time)
+    }
+
+    fun savePhotos(individualId: Long, photoPaths: List<String>) {
+        val now = Date()
+        val photos = ArrayList<Photo>()
+        photoPaths.forEach {
+            photos.add(Photo(0, individualId.toInt(), it, now, now))
+        }
+        Executors.newSingleThreadExecutor().execute {
+            dao.insertPhotos(photos)
+        }
     }
 }

@@ -23,7 +23,10 @@ interface SkateDao {
     fun insertSummaries(summaries: List<Summary>)
 
     @Insert
-    fun insertIndividual(individual: Individual)
+    fun insertIndividual(individual: Individual): Long
+
+    @Insert
+    fun insertPhotos(photos: List<Photo>)
 
     @Update
     fun updateEffort(effort: Effort)
@@ -58,6 +61,6 @@ interface SkateDao {
     @Query("SELECT summaries.date AS date, species.name AS speciesName, summaries.other_name AS otherName, summaries.number AS number FROM summaries JOIN species ON summaries.species_id = species.id ORDER BY summaries.date ASC")
     fun getSummariesForExport(): List<SummaryForExport>
 
-    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, individuals.pit_tag_number AS pitTagNumber FROM individuals JOIN species ON individuals.species_id = species.id ORDER BY individuals.date ASC")
+    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, individuals.pit_tag_number AS pitTagNumber, GROUP_CONCAT(photos.file, '; ') AS photos FROM individuals JOIN species ON individuals.species_id = species.id LEFT OUTER JOIN photos ON individuals.id = photos.individual_id GROUP BY date, speciesName, length, width, sex, pit_tag_number ORDER BY individuals.date ASC")
     fun getIndividualsForExport(): List<IndividualForExport>
 }

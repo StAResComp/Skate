@@ -1,8 +1,6 @@
 package uk.ac.standrews.skate.ui.flapperSkate
 
-import android.app.AlertDialog
-import android.app.Dialog
-import android.content.DialogInterface
+import android.app.Activity.RESULT_OK
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
@@ -15,20 +13,21 @@ import android.widget.*
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
 import uk.ac.standrews.skate.R
-import java.nio.file.*
 import java.io.*
-import java.text.SimpleDateFormat
 import java.util.*
 
-class FlapperSkateFragment : Fragment() {
+class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener {
 
     private lateinit var flapperSkateViewModel: FlapperSkateViewModel
     private lateinit var sexSpinner: Spinner
     private lateinit var saveButton: Button
+    private var timestamp: Long = 0
+    private var individualId: Long = 0
+    private lateinit var currentPhotoPath: String
+    private val photoPaths = ArrayList<String>()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -54,11 +53,13 @@ class FlapperSkateFragment : Fragment() {
             val sex = (sexSpinner.selectedItem as String)[0]
             val tagNumField = root.findViewById(R.id.tag_num) as EditText
             val tagNum = tagNumField.text.toString()
-            val timestamp = flapperSkateViewModel.saveIndividual(length, width, sex, tagNum)
+            val individualDetails = flapperSkateViewModel.saveIndividual(length, width, sex, tagNum)
+            individualId = individualDetails.first
+            timestamp = individualDetails.second
             lengthField.text.clear()
             widthField.text.clear()
             tagNumField.text.clear()
-            PhotoDialogFragment(timestamp).show(fragmentManager!!, "photo")
+            doPhotoDialog()
         }
         val list: ListView = root.findViewById(R.id.individuals_list)
         flapperSkateViewModel.getIndividuals().observe(this, Observer {
@@ -72,60 +73,59 @@ class FlapperSkateFragment : Fragment() {
         return root
     }
 
-    class PhotoDialogFragment constructor(ts: Long) : DialogFragment() {
+    private fun doPhotoDialog() {
+        val photoDialog = PhotoDialogFragment()
+        photoDialog.setTargetFragment(this, 300)
+        photoDialog.show(fragmentManager!!, "photo")
+    }
 
-        private val timestamp = ts
+    override fun onDialogPositiveClick(dialog: DialogFragment) {
+        dispatchTakePictureIntent()
+    }
 
-        override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-            return activity?.let {
-                val builder = AlertDialog.Builder(it)
-                builder.setMessage("Would you like to take a(nother) photo?")
-                    .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
-                        dispatchTakePictureIntent()
-                    })
-                    .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
-                        dialog.dismiss()
-                    })
-                builder.create()
-            } ?: throw IllegalStateException("Activity cannot be null")
-        }
+    override fun onDialogNegativeClick(dialog: DialogFragment) {
+        flapperSkateViewModel.savePhotos(individualId, photoPaths)
+    }
 
-        val REQUEST_IMAGE_CAPTURE = 5986
+    val REQUEST_IMAGE_CAPTURE = 2
 
-        private fun dispatchTakePictureIntent() {
-            Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
-                takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
-                    val photoFile: File? = try {
-                        createImageFile()
-                    }
-                    catch (ex: IOException) {
-                       null
-                    }
-                    photoFile?.also {
-                        val photoURI: Uri = FileProvider.getUriForFile(
-                            context!!,
-                            "uk.ac.standrews.skate.fileprovider",
-                            it
-                        )
-                        takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
-                        startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
-                        PhotoDialogFragment(timestamp).show(fragmentManager!!, "photo")
-                    }
+    private fun dispatchTakePictureIntent() {
+        val photoFile = createImageFile()
+        currentPhotoPath = photoFile.path
+        Intent(MediaStore.ACTION_IMAGE_CAPTURE).also { takePictureIntent ->
+            takePictureIntent.resolveActivity(activity!!.packageManager)?.also {
+                photoFile.also {
+                    val photoURI: Uri = FileProvider.getUriForFile(
+                        context!!,
+                        "uk.ac.standrews.skate.fileprovider",
+                        it
+                    )
+                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI)
+                    this.startActivityForResult(takePictureIntent, REQUEST_IMAGE_CAPTURE)
                 }
             }
         }
+    }
 
-        @Throws(IOException::class)
-        private fun createImageFile(): File {
-            val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-            val dir = File(downloads, timestamp.toString())
-            dir.mkdir()
-            // Create an image file name
-            return File.createTempFile(
-                "image_${Date().time}", /* prefix */
-                ".jpg", /* suffix */
-                dir /* directory */
-            )
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
+            photoPaths.add(currentPhotoPath)
+            Toast.makeText(this.context, "Photo saved to $currentPhotoPath", Toast.LENGTH_LONG).show()
+            doPhotoDialog()
         }
+    }
+
+    @Throws(IOException::class)
+    private fun createImageFile(): File {
+        val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
+        val dir = File(downloads, timestamp.toString())
+        dir.mkdir()
+        // Create an image file name
+        return File.createTempFile(
+            "image_${Date().time}", /* prefix */
+            ".jpg", /* suffix */
+            dir /* directory */
+        )
     }
 }
