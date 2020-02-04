@@ -20,7 +20,7 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
         return dao.getIndividuals()
     }
 
-    fun saveIndividual(length: Double, width: Double, sex: Char, tagNum: String) {
+    fun saveIndividual(length: Double, width: Double, sex: Char, tagNum: String): Long {
         if (flapperSkateId == 0) {
             val c = Callable {
                 dao.getFlapperSkateId()
@@ -32,5 +32,6 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
         Executors.newSingleThreadExecutor().execute {
             dao.insertIndividual(individual)
         }
+        return now.time
     }
 }
