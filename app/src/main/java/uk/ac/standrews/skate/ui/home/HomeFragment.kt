@@ -64,9 +64,9 @@ class HomeFragment : Fragment(), LocationListener {
             }
         })
         startButton.setOnClickListener {
+            getLocation()
             val currentLocation = location
             if (currentLocation != null) {
-                Log.e("Effort", "Location: ${currentLocation.latitude},${currentLocation.longitude}")
                 homeViewModel.startEffort(
                     Integer.parseInt(numRodsField.text.toString()),
                     currentLocation.latitude, currentLocation.longitude
@@ -74,10 +74,11 @@ class HomeFragment : Fragment(), LocationListener {
                 finishMode()
             }
             else {
-                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT)
+                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT).show()
             }
         }
         finishButton.setOnClickListener {
+            getLocation()
             val currentLocation = location
             val effortToFinish = currentEffort
             if (currentLocation != null && effortToFinish != null) {
@@ -88,7 +89,7 @@ class HomeFragment : Fragment(), LocationListener {
                 startMode()
             }
             else {
-                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT)
+                Toast.makeText(this.context, "Unable to determine location", Toast.LENGTH_SHORT).show()
             }
         }
         return root
