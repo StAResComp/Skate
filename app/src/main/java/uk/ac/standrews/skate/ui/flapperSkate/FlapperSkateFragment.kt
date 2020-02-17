@@ -1,7 +1,10 @@
 package uk.ac.standrews.skate.ui.flapperSkate
 
+import android.Manifest
+import android.app.Activity
 import android.app.Activity.RESULT_OK
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
@@ -10,6 +13,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
@@ -73,10 +78,35 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
         return root
     }
 
+    private val REQUESTCODE = 2561
+
     private fun doPhotoDialog() {
-        val photoDialog = PhotoDialogFragment()
-        photoDialog.setTargetFragment(this, 300)
-        photoDialog.show(fragmentManager!!, "photo")
+        if (ContextCompat.checkSelfPermission(activity!!.applicationContext,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED) {
+            try {
+                val photoDialog = PhotoDialogFragment()
+                photoDialog.setTargetFragment(this, 300)
+                photoDialog.show(fragmentManager!!, "photo")
+            } catch (e: SecurityException) {
+                e.printStackTrace()
+            }
+        }
+        else {
+            ActivityCompat.requestPermissions(activity as Activity,
+                arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), REQUESTCODE)
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        if (requestCode == REQUESTCODE) {
+            if ((grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+                doPhotoDialog()
+            }
+        }
     }
 
     override fun onDialogPositiveClick(dialog: DialogFragment) {
