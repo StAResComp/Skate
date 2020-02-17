@@ -3,6 +3,8 @@ package uk.ac.standrews.skate.ui.flapperSkate
 import android.Manifest
 import android.app.Activity
 import android.app.Activity.RESULT_OK
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
@@ -52,19 +54,34 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
         saveButton = root.findViewById(R.id.save_button)
         saveButton.setOnClickListener {
             val lengthField = root.findViewById(R.id.length) as EditText
-            val length = lengthField.text.toString().toDouble()
             val widthField = root.findViewById(R.id.width) as EditText
-            val width = widthField.text.toString().toDouble()
-            val sex = (sexSpinner.selectedItem as String)[0]
-            val tagNumField = root.findViewById(R.id.tag_num) as EditText
-            val tagNum = tagNumField.text.toString()
-            val individualDetails = flapperSkateViewModel.saveIndividual(length, width, sex, tagNum)
-            individualId = individualDetails.first
-            timestamp = individualDetails.second
-            lengthField.text.clear()
-            widthField.text.clear()
-            tagNumField.text.clear()
-            doPhotoDialog()
+            if (lengthField.text.isNotBlank() && widthField.text.isNotBlank()) {
+                val length = lengthField.text.toString().toDouble()
+                val width = widthField.text.toString().toDouble()
+                val sex = (sexSpinner.selectedItem as String)[0]
+                val tagNumField = root.findViewById(R.id.tag_num) as EditText
+                val tagNum = tagNumField.text.toString()
+                val individualDetails =
+                    flapperSkateViewModel.saveIndividual(length, width, sex, tagNum)
+                individualId = individualDetails.first
+                timestamp = individualDetails.second
+                lengthField.text.clear()
+                widthField.text.clear()
+                tagNumField.text.clear()
+                doPhotoDialog()
+            }
+            else {
+                val alertDialog = AlertDialog.Builder(this.context).create()
+                alertDialog.setTitle("Warning!")
+                alertDialog.setMessage("Both length and width must be entered")
+                alertDialog.setButton(
+                    AlertDialog.BUTTON_NEUTRAL, "OK",
+                    { dialog, which ->
+                        dialog.dismiss()
+                    }
+                )
+                alertDialog.show()
+            }
         }
         val list: ListView = root.findViewById(R.id.individuals_list)
         flapperSkateViewModel.getIndividuals().observe(this, Observer {
