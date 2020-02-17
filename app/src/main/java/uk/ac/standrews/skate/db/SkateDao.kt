@@ -17,6 +17,9 @@ interface SkateDao {
     fun insertSpecies(species: Array<Species>)
 
     @Insert
+    fun insertWeights(weights: Array<FlapperSkateWeight>)
+
+    @Insert
     fun insertEffort(effort: Effort)
 
     @Insert
@@ -63,4 +66,7 @@ interface SkateDao {
 
     @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, individuals.pit_tag_number AS pitTagNumber, GROUP_CONCAT(photos.file, '; ') AS photos FROM individuals JOIN species ON individuals.species_id = species.id LEFT OUTER JOIN photos ON individuals.id = photos.individual_id GROUP BY date, speciesName, length, width, sex, pit_tag_number ORDER BY individuals.date ASC")
     fun getIndividualsForExport(): List<IndividualForExport>
+
+    @Query("SELECT COUNT(*) FROM flapper_skate_weights")
+    fun getNumWeights(): Int
 }
