@@ -18,6 +18,7 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -25,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders
 import uk.ac.standrews.skate.R
 import java.io.*
 import java.util.*
+import kotlin.math.roundToInt
 
 class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener {
 
@@ -35,6 +37,9 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
     private var individualId: Long = 0
     private lateinit var currentPhotoPath: String
     private val photoPaths = ArrayList<String>()
+    private lateinit var lengthField: EditText
+    private lateinit var widthField: EditText
+    private lateinit var weightField: TextView
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,10 +56,33 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
             android.R.id.text1,
             arrayOf("Male", "Female")
         )
+        lengthField = root.findViewById(R.id.length) as EditText
+        widthField = root.findViewById(R.id.width) as EditText
+        weightField = root.findViewById(R.id.weight) as TextView
+        lengthField.setOnFocusChangeListener { _, _ ->
+            doWeight()
+        }
+        widthField.setOnFocusChangeListener { _, _ ->
+            doWeight()
+        }
+        sexSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+                doWeight()
+            }
+
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+            }
+
+        }
         saveButton = root.findViewById(R.id.save_button)
         saveButton.setOnClickListener {
-            val lengthField = root.findViewById(R.id.length) as EditText
-            val widthField = root.findViewById(R.id.width) as EditText
             if (lengthField.text.isNotBlank() && widthField.text.isNotBlank()) {
                 val length = lengthField.text.toString().toDouble()
                 val width = widthField.text.toString().toDouble()
@@ -91,6 +119,24 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
             )
         })
         return root
+    }
+
+    private fun doWeight() {
+        if (lengthField.text.isNotBlank() && widthField.text.isNotBlank()) {
+            val l = lengthField.text.toString().toDouble().roundToInt()
+            val w = widthField.text.toString().toDouble().roundToInt()
+            val s= (sexSpinner.selectedItem as String)[0]
+            val weight = flapperSkateViewModel.getWeight(s, l, w)
+            if (weight == null) {
+                weightField.text = "Not known"
+            }
+            else {
+                weightField.text = weight.toString()
+            }
+        }
+        else {
+            weightField.text = ""
+        }
     }
 
     private val REQUESTCODE = 2561

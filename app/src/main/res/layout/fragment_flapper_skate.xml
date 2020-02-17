@@ -16,7 +16,7 @@
             android:id="@+id/length_label"
             android:layout_columnWeight="1"
             android:layout_gravity="end"
-            android:text="Length:" />
+            android:text="Length (in.):" />
 
         <EditText
             android:id="@+id/length"
@@ -31,7 +31,7 @@
             android:id="@+id/width_label"
             android:layout_columnWeight="1"
             android:layout_gravity="end"
-            android:text="Width:" />
+            android:text="Width (in.):" />
 
         <EditText
             android:id="@+id/width"
@@ -54,6 +54,20 @@
             android:layout_height="wrap_content"
             android:layout_columnWeight="1"
             android:layout_gravity="start" />
+
+        <TextView
+            style="@android:style/TextAppearance.Medium"
+            android:id="@+id/weight_label"
+            android:layout_columnWeight="1"
+            android:layout_gravity="end"
+            android:text="Weight (lb.):" />
+
+        <TextView
+            style="@android:style/TextAppearance.Medium"
+            android:id="@+id/weight"
+            android:layout_columnWeight="1"
+            android:layout_gravity="start"
+            android:text="Weight (lb.):" />
 
         <TextView
             style="@android:style/TextAppearance.Medium"

@@ -9,6 +9,7 @@ import uk.ac.standrews.skate.db.entities.Photo
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
+import kotlin.math.roundToInt
 
 class FlapperSkateViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -46,6 +47,19 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
         }
         Executors.newSingleThreadExecutor().execute {
             dao.insertPhotos(photos)
+        }
+    }
+
+    fun getWeight(sex: Char, length: Int, width: Int): Int? {
+        val c = Callable {
+            dao.getWeight(sex, length, width)
+        }
+        val weight = Executors.newSingleThreadExecutor().submit(c).get()
+        if (weight != null) {
+            return (weight as Double).roundToInt()
+        }
+        else {
+            return null
         }
     }
 }

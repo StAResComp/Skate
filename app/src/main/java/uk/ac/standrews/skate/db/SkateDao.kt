@@ -69,4 +69,7 @@ interface SkateDao {
 
     @Query("SELECT COUNT(*) FROM flapper_skate_weights")
     fun getNumWeights(): Int
+
+    @Query("SELECT weight FROM flapper_skate_weights WHERE sex = :sex AND length = :length AND width = :width")
+    fun getWeight(sex: Char, length: Int, width: Int): Double?
 }
