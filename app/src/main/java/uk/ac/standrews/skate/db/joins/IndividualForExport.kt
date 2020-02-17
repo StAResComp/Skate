@@ -9,13 +9,14 @@ data class IndividualForExport(
     private val speciesName: String,
     private val length: Double,
     private val width: Double,
-    private val sex: Double,
+    private val sex: Char,
+    private val weight: Double,
     private val pitTagNumber: String,
     private val photos: String?
 ) : Exportable {
     override fun toString(): String {
         val dateString = SimpleDateFormat("yyyy-MM-dd").format(date)
-        return "$dateString, $speciesName, $length, $width, $sex, \"$pitTagNumber\", \"$photos\""
+        return "$dateString, $speciesName, $length, $width, $sex, $weight, \"$pitTagNumber\", \"$photos\""
     }
 
     override fun toCsvString(): String {
@@ -23,6 +24,6 @@ data class IndividualForExport(
     }
 
     override fun getCsvHeaderRow(): String {
-        return "Date, Species, Length, Width, Sex, PIT tag number, Photos"
+        return "Date, Species, Length, Width, Sex, Weight, PIT tag number, Photos"
     }
 }

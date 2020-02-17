@@ -64,7 +64,7 @@ interface SkateDao {
     @Query("SELECT summaries.date AS date, species.name AS speciesName, summaries.other_name AS otherName, summaries.number AS number FROM summaries JOIN species ON summaries.species_id = species.id ORDER BY summaries.date ASC")
     fun getSummariesForExport(): List<SummaryForExport>
 
-    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, individuals.pit_tag_number AS pitTagNumber, GROUP_CONCAT(photos.file, '; ') AS photos FROM individuals JOIN species ON individuals.species_id = species.id LEFT OUTER JOIN photos ON individuals.id = photos.individual_id GROUP BY date, speciesName, length, width, sex, pit_tag_number ORDER BY individuals.date ASC")
+    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, flapper_skate_weights.weight AS weight, individuals.pit_tag_number AS pitTagNumber, GROUP_CONCAT(photos.file, '; ') AS photos FROM individuals JOIN species ON individuals.species_id = species.id LEFT OUTER JOIN photos ON individuals.id = photos.individual_id LEFT OUTER JOIN flapper_skate_weights ON CAST(ROUND(individuals.length) AS INTEGER) = flapper_skate_weights.length AND CAST(ROUND(individuals.width) AS INTEGER) = flapper_skate_weights.width AND individuals.sex = flapper_skate_weights.sex GROUP BY date, speciesName, individuals.length, individuals.width, individuals.sex, weight, pit_tag_number ORDER BY individuals.date ASC")
     fun getIndividualsForExport(): List<IndividualForExport>
 
     @Query("SELECT COUNT(*) FROM flapper_skate_weights")
