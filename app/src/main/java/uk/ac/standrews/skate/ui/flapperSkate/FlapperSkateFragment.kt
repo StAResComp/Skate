@@ -75,11 +75,9 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
                 alertDialog.setTitle("Warning!")
                 alertDialog.setMessage("Both length and width must be entered")
                 alertDialog.setButton(
-                    AlertDialog.BUTTON_NEUTRAL, "OK",
-                    { dialog, which ->
+                    AlertDialog.BUTTON_NEUTRAL, "OK") { dialog, which ->
                         dialog.dismiss()
                     }
-                )
                 alertDialog.show()
             }
         }
