@@ -44,8 +44,8 @@ abstract class SkateDatabase : RoomDatabase() {
 
         fun seedDatabaseCallback(context: Context) : Callback {
             return object : Callback() {
-                override fun onCreate(db: SupportSQLiteDatabase) {
-                    super.onCreate(db)
+                override fun onOpen(db: SupportSQLiteDatabase) {
+                    super.onOpen(db)
                     Executors.newSingleThreadExecutor().execute {
                         val dao = getSkateDatabase(context).skateDao()
                         val currentSpecies = dao.getSpecies()
