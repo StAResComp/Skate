@@ -16,7 +16,7 @@ import java.util.concurrent.Executors
         Photo::class,
         FlapperSkateWeight::class
     ],
-    version = 1
+    version = 2
 )
 @TypeConverters(DateTypeConverter::class)
 abstract class SkateDatabase : RoomDatabase() {
@@ -34,6 +34,7 @@ abstract class SkateDatabase : RoomDatabase() {
                     SkateDatabase::class.java,
                     "skate.sqlite"
                 )
+                    .fallbackToDestructiveMigration()
                     .addCallback(seedDatabaseCallback(context))
                     .build()
                 INSTANCE = instance
