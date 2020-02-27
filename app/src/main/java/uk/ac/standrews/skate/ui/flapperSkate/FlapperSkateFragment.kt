@@ -23,6 +23,7 @@ import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
+import androidx.loader.content.CursorLoader
 import uk.ac.standrews.skate.R
 import java.io.*
 import java.util.*
@@ -178,6 +179,10 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
         flapperSkateViewModel.savePhotos(individualId, photoPaths)
     }
 
+    override fun onDialogNeutralClick(dialog: DialogFragment) {
+        dispatchChoosePictureIntent()
+    }
+
     val REQUEST_IMAGE_CAPTURE = 2
 
     private fun dispatchTakePictureIntent() {
@@ -198,10 +203,25 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
         }
     }
 
+    val REQUEST_IMAGE_SELECTION = 3
+
+    private fun dispatchChoosePictureIntent() {
+        val chooseImageIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+        startActivityForResult(chooseImageIntent, REQUEST_IMAGE_SELECTION)
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == RESULT_OK) {
             photoPaths.add(currentPhotoPath)
+            Toast.makeText(this.context, "Photo saved to $currentPhotoPath", Toast.LENGTH_LONG).show()
+            doPhotoDialog()
+        }
+        if (requestCode == REQUEST_IMAGE_SELECTION && resultCode == RESULT_OK) {
+            val inputStream = this.context!!.contentResolver.openInputStream(data!!.data!!)
+            val targetFile = createImageFile()
+            targetFile.writeBytes(inputStream!!.readBytes())
+            currentPhotoPath = targetFile.path
             Toast.makeText(this.context, "Photo saved to $currentPhotoPath", Toast.LENGTH_LONG).show()
             doPhotoDialog()
         }

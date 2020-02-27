@@ -15,6 +15,7 @@ class PhotoDialogFragment : DialogFragment() {
     interface PhotoDialogListener {
         fun onDialogPositiveClick(dialog: DialogFragment)
         fun onDialogNegativeClick(dialog: DialogFragment)
+        fun onDialogNeutralClick(dialog: DialogFragment)
     }
 
     override fun onAttach(context: Context) {
@@ -30,13 +31,15 @@ class PhotoDialogFragment : DialogFragment() {
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
         return activity?.let {
             val builder = AlertDialog.Builder(it)
-            builder.setMessage("Would you like to take a(nother) photo?")
+            builder.setMessage("Would you like to take a photo?")
                 .setPositiveButton("Yes", DialogInterface.OnClickListener { dialog, which ->
                     listener.onDialogPositiveClick(this)
                 })
                 .setNegativeButton("No", DialogInterface.OnClickListener { dialog, which ->
                     listener.onDialogNegativeClick(this)
                     dialog.dismiss()
+                }).setNeutralButton("Choose existing", DialogInterface.OnClickListener { dialog, which ->
+                    listener.onDialogNeutralClick(this)
                 })
             builder.create()
         } ?: throw IllegalStateException("Activity cannot be null")
