@@ -55,8 +55,8 @@ interface SkateDao {
     @Query("SELECT id FROM species WHERE name LIKE 'Flapper skate'")
     fun getFlapperSkateId(): Int
 
-    @Query("SELECT * FROM individuals ORDER BY date DESC")
-    fun getIndividuals(): LiveData<Array<Individual>>
+    @Query("SELECT individuals.date AS date, species.name AS speciesName, individuals.length AS length, individuals.width AS width, individuals.sex AS sex, flapper_skate_weights.weight AS weight, individuals.pit_tag_number AS pitTagNumber, GROUP_CONCAT(photos.file, '; ') AS photos FROM individuals JOIN species ON individuals.species_id = species.id LEFT OUTER JOIN photos ON individuals.id = photos.individual_id LEFT OUTER JOIN flapper_skate_weights ON CAST(ROUND(individuals.length) AS INTEGER) = flapper_skate_weights.length AND CAST(ROUND(individuals.width) AS INTEGER) = flapper_skate_weights.width AND individuals.sex = flapper_skate_weights.sex GROUP BY date, speciesName, individuals.length, individuals.width, individuals.sex, weight, pit_tag_number ORDER BY individuals.date DESC")
+    fun getIndividuals(): LiveData<Array<IndividualForExport>>
 
     @Query("SELECT summaries.date AS date, GROUP_CONCAT(summaries.number || ' ' || species.name || COALESCE(' (' || summaries.other_name || ')', ''), ', ') AS summaryString FROM summaries JOIN species ON summaries.species_id = species.id GROUP BY summaries.date ORDER BY summaries.date DESC")
     fun getDailySummaries(): LiveData<Array<DailySummary>>

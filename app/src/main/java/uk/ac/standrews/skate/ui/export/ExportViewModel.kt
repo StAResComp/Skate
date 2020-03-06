@@ -60,7 +60,7 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
             bufferedWriter.write(data.first().getCsvHeaderRow())
             bufferedWriter.newLine()
             data.forEach {
-                bufferedWriter.write(it.toString())
+                bufferedWriter.write(it.toCsvString())
                 bufferedWriter.newLine()
             }
             bufferedWriter.close()

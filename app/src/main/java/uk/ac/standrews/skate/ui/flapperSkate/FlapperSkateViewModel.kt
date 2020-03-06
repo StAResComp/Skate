@@ -6,6 +6,7 @@ import androidx.lifecycle.LiveData
 import uk.ac.standrews.skate.db.SkateDatabase
 import uk.ac.standrews.skate.db.entities.Individual
 import uk.ac.standrews.skate.db.entities.Photo
+import uk.ac.standrews.skate.db.joins.IndividualForExport
 import java.util.*
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -16,7 +17,7 @@ class FlapperSkateViewModel(application: Application) : AndroidViewModel(applica
     private val dao = SkateDatabase.getSkateDatabase(getApplication()).skateDao()
     private var flapperSkateId = 0
 
-    fun getIndividuals(): LiveData<Array<Individual>> {
+    fun getIndividuals(): LiveData<Array<IndividualForExport>> {
         val c = Callable {
             dao.getIndividuals()
         }
