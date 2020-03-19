@@ -26,6 +26,7 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.loader.content.CursorLoader
 import uk.ac.standrews.skate.R
 import java.io.*
+import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.math.roundToInt
 
@@ -222,6 +223,7 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
             val targetFile = createImageFile()
             targetFile.writeBytes(inputStream!!.readBytes())
             currentPhotoPath = targetFile.path
+            photoPaths.add(currentPhotoPath)
             Toast.makeText(this.context, "Photo saved to $currentPhotoPath", Toast.LENGTH_LONG).show()
             doPhotoDialog()
         }
@@ -230,11 +232,12 @@ class FlapperSkateFragment : Fragment(), PhotoDialogFragment.PhotoDialogListener
     @Throws(IOException::class)
     private fun createImageFile(): File {
         val downloads = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
-        val dir = File(downloads, timestamp.toString())
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss")
+        val dir = File(downloads, "pics-of-skate-${individualId}-${sdf.format(timestamp)}")
         dir.mkdir()
         // Create an image file name
         return File.createTempFile(
-            "image_${Date().time}", /* prefix */
+            "${individualId}_${sdf.format(Date())}_", /* prefix */
             ".jpg", /* suffix */
             dir /* directory */
         )

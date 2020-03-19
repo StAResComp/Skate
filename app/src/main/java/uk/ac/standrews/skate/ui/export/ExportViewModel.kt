@@ -25,8 +25,8 @@ class ExportViewModel(application: Application) : AndroidViewModel(application) 
         val effort = data.first
         val summaries = data.second
         val individuals = data.third
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss")
-        val dirName = "skate-${sdf.format(Date())}"
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH-mm-ss")
+        val dirName = "skate-app-export-${sdf.format(Date())}"
         val dir = File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS), dirName)
         dir.mkdir()
         writeToFile(

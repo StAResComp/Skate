@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 data class IndividualForExport(
+    private val id: Int,
     private val date: Date,
     private val speciesName: String,
     private val length: Double,
@@ -23,10 +24,10 @@ data class IndividualForExport(
 
     override fun toCsvString(): String {
         val dateString = SimpleDateFormat("yyyy-MM-dd").format(date)
-        return "$dateString, $speciesName, $length, $width, $sex, $weight, \"$pitTagNumber\", \"$photos\""
+        return "$id, $dateString, $speciesName, $length, $width, $sex, $weight, \"$pitTagNumber\", \"$photos\""
     }
 
     override fun getCsvHeaderRow(): String {
-        return "Date, Species, Length, Width, Sex, Weight, PIT tag number, Photos"
+        return "ID, Date, Species, Length, Width, Sex, Weight, PIT tag number, Photos"
     }
 }
